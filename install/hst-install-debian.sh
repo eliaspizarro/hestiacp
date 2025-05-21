@@ -2383,6 +2383,13 @@ apt-get -y upgrade >> $LOG &
 BACK_PID=$!
 echo
 
+# Detener nginx del sistema si está corriendo, para evitar conflicto con hestia-nginx
+if systemctl is-active --quiet nginx; then
+    echo "[ * ] Detected system nginx running — stopping to avoid conflict..."
+    systemctl stop nginx
+    systemctl disable nginx
+fi
+
 # Starting Hestia service
 update-rc.d hestia defaults
 systemctl start hestia
