@@ -2387,7 +2387,8 @@ echo
 if systemctl is-active --quiet nginx; then
     echo "[ * ] Detected system nginx running — stopping to avoid conflict..."
     systemctl stop nginx
-    systemctl disable nginx
+    sed -i "s/#       listen              8083 ssl;/       listen              8083 ssl;/" /usr/local/hestia/nginx/conf/nginx.conf
+    sed -i "s/#       listen              \[::\]:8083 ssl;/       listen              \[::\]:8083 ssl;/" /usr/local/hestia/nginx/conf/nginx.conf
 fi
 
 # Starting Hestia service
