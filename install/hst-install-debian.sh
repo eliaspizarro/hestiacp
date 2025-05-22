@@ -2383,12 +2383,14 @@ apt-get -y upgrade >> $LOG &
 BACK_PID=$!
 echo
 
-# Detener nginx del sistema si está corriendo, para evitar conflicto con hestia-nginx
+# Detener nginx del sistema si está corriendo, para evitar conflicto con hestia-nginx y corregir comentarios en nginx.conf
 if systemctl is-active --quiet nginx; then
     echo "[ * ] Detected system nginx running — stopping to avoid conflict..."
     systemctl stop nginx
-    sed -i "s/#       listen              8083 ssl;/       listen              8083 ssl;/" /usr/local/hestia/nginx/conf/nginx.conf
-    sed -i "s/#       listen              \[::\]:8083 ssl;/       listen              \[::\]:8083 ssl;/" /usr/local/hestia/nginx/conf/nginx.conf
+	echo "[ * ] Fix comments in nginx.conf..."
+    sed -i -e '/listen/s/^[[:space:]]*#//' /usr/local/hestia/nginx/conf/nginx.conf
+	echo "[ * ] Starting nginx..."
+	systemctl start nginx >> $LOG
 fi
 
 # Starting Hestia service
